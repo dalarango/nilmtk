@@ -25,7 +25,6 @@ test.set_window(start="2011-04-30")
 train_elec = train.buildings[1].elec
 test_elec = test.buildings[1].elec
 
-
 top_5_train_elec = train_elec.submeters().select_top_k(k=5)
 
 def predict(clf, test_elec, sample_period, timezone):
@@ -66,8 +65,7 @@ def predict(clf, test_elec, sample_period, timezone):
     return gt_overall, pred_overall
 
 
-import numpy.random
-numpy.random.seed(42)
+np.random.seed(42)
 
 params = {}
 classifiers = {'CO':CombinatorialOptimisation(), 'FHMM':FHMM()}
