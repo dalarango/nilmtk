@@ -2,6 +2,7 @@ name: nilmtk-env
 channels:
     - conda-forge
     - nilmtk
+    - conda
 dependencies:
 - python>=3.6
 - Cython>=0.27.3
@@ -24,4 +25,4 @@ dependencies:
 - coveralls
 - nilm_metadata
 - nilmtk
-- hmmlearn
+- hmmlearnconda 
