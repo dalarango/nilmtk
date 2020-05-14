@@ -49,15 +49,3 @@ fhmm.export_model(filename='fhmm.h5')
 co.import_model(filename='co.h5')
 fhmm.import_model(filename='fhmm.h5')
 
-
-
-### Predictions
-gt, predictions[clf_name] = predict(clf, test_elec, 120, train.metadata['timezone'])
-
-rmse = {}
-for clf_name in classifiers.keys():
-    rmse[clf_name] = nilmtk.utils.compute_rmse(gt, predictions[clf_name], pretty=True)
-
-rmse = pd.DataFrame(rmse)
-
-print(rmse)
