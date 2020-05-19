@@ -1,0 +1,204 @@
+appliances:
+- instance: 1
+  meters:
+  - 3
+  multiple: true
+  original_name: outlets_unknown
+  type: sockets
+- instance: 2
+  meters:
+  - 4
+  multiple: true
+  original_name: outlets_unknown
+  type: sockets
+- instance: 1
+  meters:
+  - 5
+  multiple: true
+  original_name: lighting
+  type: light
+- instance: 1
+  meters:
+  - 6
+  multiple: true
+  original_name: electronics
+  type: CE appliance
+- instance: 1
+  meters:
+  - 7
+  original_name: refrigerator
+  type: fridge
+- instance: 1
+  meters:
+  - 8
+  original_name: disposal
+  type: waste disposal unit
+- instance: 1
+  meters:
+  - 9
+  original_name: dishwaser
+  type: dish washer
+- instance: 1
+  meters:
+  - 10
+  original_name: furnace
+  type: electric furnace
+- instance: 2
+  meters:
+  - 11
+  multiple: true
+  original_name: lighting
+  type: light
+- instance: 3
+  meters:
+  - 12
+  multiple: true
+  original_name: outlets_unknown
+  type: sockets
+- instance: 1
+  meters:
+  - 13
+  - 14
+  original_name: washer_dryer
+  type: washer dryer
+- instance: 3
+  meters:
+  - 15
+  multiple: true
+  original_name: lighting
+  type: light
+- instance: 1
+  meters:
+  - 16
+  original_name: microwave
+  type: microwave
+- instance: 4
+  meters:
+  - 17
+  multiple: true
+  original_name: lighting
+  type: light
+- instance: 1
+  meters:
+  - 18
+  multiple: true
+  original_name: smoke_alarms
+  type: smoke alarm
+- instance: 5
+  meters:
+  - 19
+  multiple: true
+  original_name: lighting
+  type: light
+- instance: 1
+  meters:
+  - 20
+  multiple: true
+  original_name: bathroom_gfi
+  room: bathroom
+  type: unknown
+- instance: 4
+  meters:
+  - 21
+  multiple: true
+  original_name: kitchen_outlets
+  room: kitchen
+  type: sockets
+- instance: 5
+  meters:
+  - 22
+  multiple: true
+  original_name: kitchen_outlets
+  room: kitchen
+  type: sockets
+elec_meters:
+  1:
+    data_location: /building3/elec/meter1
+    device_model: REDD_whole_house
+    site_meter: true
+  2:
+    data_location: /building3/elec/meter2
+    device_model: REDD_whole_house
+    site_meter: true
+  3:
+    data_location: /building3/elec/meter3
+    device_model: eMonitor
+    submeter_of: 0
+  4:
+    data_location: /building3/elec/meter4
+    device_model: eMonitor
+    submeter_of: 0
+  5:
+    data_location: /building3/elec/meter5
+    device_model: eMonitor
+    submeter_of: 0
+  6:
+    data_location: /building3/elec/meter6
+    device_model: eMonitor
+    submeter_of: 0
+  7:
+    data_location: /building3/elec/meter7
+    device_model: eMonitor
+    submeter_of: 0
+  8:
+    data_location: /building3/elec/meter8
+    device_model: eMonitor
+    submeter_of: 0
+  9:
+    data_location: /building3/elec/meter9
+    device_model: eMonitor
+    submeter_of: 0
+  10:
+    data_location: /building3/elec/meter10
+    device_model: eMonitor
+    submeter_of: 0
+  11:
+    data_location: /building3/elec/meter11
+    device_model: eMonitor
+    submeter_of: 0
+  12:
+    data_location: /building3/elec/meter12
+    device_model: eMonitor
+    submeter_of: 0
+  13:
+    data_location: /building3/elec/meter13
+    device_model: eMonitor
+    submeter_of: 0
+  14:
+    data_location: /building3/elec/meter14
+    device_model: eMonitor
+    submeter_of: 0
+  15:
+    data_location: /building3/elec/meter15
+    device_model: eMonitor
+    submeter_of: 0
+  16:
+    data_location: /building3/elec/meter16
+    device_model: eMonitor
+    submeter_of: 0
+  17:
+    data_location: /building3/elec/meter17
+    device_model: eMonitor
+    submeter_of: 0
+  18:
+    data_location: /building3/elec/meter18
+    device_model: eMonitor
+    submeter_of: 0
+  19:
+    data_location: /building3/elec/meter19
+    device_model: eMonitor
+    submeter_of: 0
+  20:
+    data_location: /building3/elec/meter20
+    device_model: eMonitor
+    submeter_of: 0
+  21:
+    data_location: /building3/elec/meter21
+    device_model: eMonitor
+    submeter_of: 0
+  22:
+    data_location: /building3/elec/meter22
+    device_model: eMonitor
+    submeter_of: 0
+instance: 3
+original_name: house_3

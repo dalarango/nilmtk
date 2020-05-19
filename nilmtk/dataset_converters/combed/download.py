@@ -17,7 +17,7 @@ def download():
     UUID_URL = join(SMAP_URL, "backend/api/query")
 
     MEASUREMENTS = ["Power", "Energy", "Current"]
-    BASE_PATH = "/Users/nipunbatra/Desktop/iiitd/"
+    BASE_PATH = "/Users/dl50129/Desktop/iiitd/"
 
     academic_block = {'AHU': [0, 1, 2, 5],
                       'Building Total Mains': [0],

@@ -1,0 +1,158 @@
+appliances:
+- instance: 1
+  meters:
+  - 3
+  multiple: true
+  original_name: kitchen_outlets
+  room: kitchen
+  type: sockets
+- instance: 1
+  meters:
+  - 4
+  original_name: washer_dryer
+  type: washer dryer
+- instance: 1
+  meters:
+  - 5
+  original_name: stove
+  type: electric stove
+- instance: 1
+  meters:
+  - 6
+  multiple: true
+  original_name: electronics
+  type: CE appliance
+- instance: 1
+  meters:
+  - 7
+  multiple: true
+  original_name: bathroom_gfi
+  room: bathroom
+  type: unknown
+- instance: 1
+  meters:
+  - 8
+  original_name: refrigerator
+  type: fridge
+- instance: 1
+  meters:
+  - 9
+  original_name: dishwaser
+  type: dish washer
+- instance: 2
+  meters:
+  - 10
+  multiple: true
+  original_name: outlets_unknown
+  type: sockets
+- instance: 3
+  meters:
+  - 11
+  multiple: true
+  original_name: outlets_unknown
+  type: sockets
+- instance: 1
+  meters:
+  - 12
+  original_name: electric_heat
+  type: electric space heater
+- instance: 4
+  meters:
+  - 13
+  multiple: true
+  original_name: kitchen_outlets
+  room: kitchen
+  type: sockets
+- instance: 1
+  meters:
+  - 14
+  multiple: true
+  original_name: lighting
+  type: light
+- description: 'a bit of a guess that this is the AHU. Channels 15,16 and 17  all
+    activate at very similar times.  Channels 16 and 17 look very similar which suggest
+    they are the chiller.
+
+    '
+  instance: 1
+  meters:
+  - 15
+  original_name: air_conditioning
+  type: air handling unit
+- instance: 1
+  meters:
+  - 16
+  - 17
+  original_name: air_conditioning
+  type: air conditioner
+elec_meters:
+  1:
+    data_location: /building6/elec/meter1
+    device_model: REDD_whole_house
+    site_meter: true
+  2:
+    data_location: /building6/elec/meter2
+    device_model: REDD_whole_house
+    site_meter: true
+  3:
+    data_location: /building6/elec/meter3
+    device_model: eMonitor
+    submeter_of: 0
+  4:
+    data_location: /building6/elec/meter4
+    device_model: eMonitor
+    submeter_of: 0
+  5:
+    data_location: /building6/elec/meter5
+    device_model: eMonitor
+    submeter_of: 0
+  6:
+    data_location: /building6/elec/meter6
+    device_model: eMonitor
+    submeter_of: 0
+  7:
+    data_location: /building6/elec/meter7
+    device_model: eMonitor
+    submeter_of: 0
+  8:
+    data_location: /building6/elec/meter8
+    device_model: eMonitor
+    submeter_of: 0
+  9:
+    data_location: /building6/elec/meter9
+    device_model: eMonitor
+    submeter_of: 0
+  10:
+    data_location: /building6/elec/meter10
+    device_model: eMonitor
+    submeter_of: 0
+  11:
+    data_location: /building6/elec/meter11
+    device_model: eMonitor
+    submeter_of: 0
+  12:
+    data_location: /building6/elec/meter12
+    device_model: eMonitor
+    submeter_of: 0
+  13:
+    data_location: /building6/elec/meter13
+    device_model: eMonitor
+    submeter_of: 0
+  14:
+    data_location: /building6/elec/meter14
+    device_model: eMonitor
+    submeter_of: 0
+  15:
+    data_location: /building6/elec/meter15
+    device_model: eMonitor
+    submeter_of: 0
+  16:
+    data_location: /building6/elec/meter16
+    device_model: eMonitor
+    submeter_of: 0
+  17:
+    data_location: /building6/elec/meter17
+    device_model: eMonitor
+    submeter_of: 0
+instance: 6
+original_name: house_6

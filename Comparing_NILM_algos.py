@@ -14,13 +14,16 @@ from nilmtk import DataSet, TimeFrame, MeterGroup, HDFDataStore
 from nilmtk.disaggregate import CombinatorialOptimisation, FHMM
 import nilmtk.utils
 
+train = DataSet('C:\\Users\\dl50129\\Desktop\\nilmtk\\data\\redd_csv', format='CSV') 
+test = DataSet('C:\\Users\\dl50129\\Desktop\\nilmtk\\data\\redd_csv', format='CSV')   
+
 train = DataSet('C:\\Users\\dl50129\\Desktop\\nilmtk\\data\\redd.h5')  
 test = DataSet('C:\\Users\\dl50129\\Desktop\\nilmtk\\data\\redd.h5')   
 
 building = 1
 
-train.set_window(end="2011-04-30")
-test.set_window(start="2011-04-30")
+train.set_window(start=None, end="2011-04-30 00:00:00")
+test.set_window(start="2011-04-30 00:00:00", end=None)
 
 train_elec = train.buildings[1].elec
 test_elec = test.buildings[1].elec
@@ -68,19 +71,24 @@ def predict(clf, test_elec, sample_period, timezone):
 np.random.seed(42)
 
 params = {}
-classifiers = {'CO':CombinatorialOptimisation(), 'FHMM':FHMM()}
-predictions = {}
+co = CombinatorialOptimisation()
+fhmm = FHMM()
+#predictions = {}
 sample_period = 120
-for clf_name, clf in classifiers.items():
-    print("*"*20)
-    print(clf_name)
-    print("*" *20)
-    clf.train(top_5_train_elec, sample_period=sample_period)
-    gt, predictions[clf_name] = predict(clf, test_elec, 120, train.metadata['timezone'])
+print("*"*20)
+print('CO')
+print("*" *20)
+co.train(top_5_train_elec, sample_period=sample_period)
+gt_1, predictions_co = predict(co, test_elec, 120, train.metadata['timezone'])
+print("*"*20)
+print('FHMM')
+print("*" *20)
+fhmm.train(top_5_train_elec, sample_period=sample_period)
+gt_2, predictions_fhmm = predict(fhmm, test_elec, 120, train.metadata['timezone'])
 
 rmse = {}
-for clf_name in classifiers.keys():
-    rmse[clf_name] = nilmtk.utils.compute_rmse(gt, predictions[clf_name], pretty=True)
+rmse['CO'] = nilmtk.utils.compute_rmse(gt_1, predictions_co, pretty=True)
+rmse['FHMM'] = nilmtk.utils.compute_rmse(gt_2, predictions_fhmm, pretty=True)
 
 rmse = pd.DataFrame(rmse)
 

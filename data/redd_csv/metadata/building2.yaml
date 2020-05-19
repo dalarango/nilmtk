@@ -1,0 +1,98 @@
+appliances:
+- instance: 1
+  meters:
+  - 3
+  multiple: true
+  original_name: kitchen_outlets
+  room: kitchen
+  type: sockets
+- instance: 1
+  meters:
+  - 4
+  multiple: true
+  original_name: lighting
+  type: light
+- instance: 1
+  meters:
+  - 5
+  original_name: stove
+  type: electric stove
+- instance: 1
+  meters:
+  - 6
+  original_name: microwave
+  type: microwave
+- instance: 1
+  meters:
+  - 7
+  original_name: washer_dryer
+  type: washer dryer
+- instance: 2
+  meters:
+  - 8
+  multiple: true
+  original_name: kitchen_outlets
+  room: kitchen
+  type: sockets
+- instance: 1
+  meters:
+  - 9
+  original_name: refrigerator
+  type: fridge
+- instance: 1
+  meters:
+  - 10
+  original_name: dishwaser
+  type: dish washer
+- instance: 1
+  meters:
+  - 11
+  original_name: disposal
+  type: waste disposal unit
+elec_meters:
+  1:
+    data_location: /building2/elec/meter1
+    device_model: REDD_whole_house
+    site_meter: true
+  2:
+    data_location: /building2/elec/meter2
+    device_model: REDD_whole_house
+    site_meter: true
+  3:
+    data_location: /building2/elec/meter3
+    device_model: eMonitor
+    submeter_of: 0
+  4:
+    data_location: /building2/elec/meter4
+    device_model: eMonitor
+    submeter_of: 0
+  5:
+    data_location: /building2/elec/meter5
+    device_model: eMonitor
+    submeter_of: 0
+  6:
+    data_location: /building2/elec/meter6
+    device_model: eMonitor
+    submeter_of: 0
+  7:
+    data_location: /building2/elec/meter7
+    device_model: eMonitor
+    submeter_of: 0
+  8:
+    data_location: /building2/elec/meter8
+    device_model: eMonitor
+    submeter_of: 0
+  9:
+    data_location: /building2/elec/meter9
+    device_model: eMonitor
+    submeter_of: 0
+  10:
+    data_location: /building2/elec/meter10
+    device_model: eMonitor
+    submeter_of: 0
+  11:
+    data_location: /building2/elec/meter11
+    device_model: eMonitor
+    submeter_of: 0
+instance: 2
+original_name: house_2

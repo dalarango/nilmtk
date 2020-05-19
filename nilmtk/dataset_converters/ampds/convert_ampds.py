@@ -25,7 +25,7 @@ columnNameMapping = {'V': ('voltage', ''),
 TIMESTAMP_COLUMN_NAME = "TS"
 TIMEZONE = "America/Vancouver"
 
-def convert_ampds(input_path, output_filename, format='HDF'):
+def convert_ampds(input_path, output_filename, format_='HDF'):
     """
     Convert AMPds R2013 as seen on Dataverse. Download the files
     as CSVs and put them in the `input_path` folder for conversion.
@@ -59,7 +59,7 @@ def convert_ampds(input_path, output_filename, format='HDF'):
     files.remove("WHE.csv")
     files.insert(0, "WHE.csv")
     assert isdir(input_path)
-    store = get_datastore(output_filename, format, mode='w')
+    store = get_datastore(output_filename, format_, mode='w')
     for i, csv_file in enumerate(files):
         key = Key(building=1, meter=(i + 1))
         print('Loading file #', (i + 1), ' : ', csv_file, '. Please wait...')

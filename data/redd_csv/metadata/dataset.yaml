@@ -1,0 +1,25 @@
+contact: zkolter@cs.cmu.edu
+creators:
+- Kolter, Zico
+- Johnson, Matthew
+description: Several weeks of power data for 6 different homes.
+geo_location:
+  country: US
+  latitude: 42.360091
+  locality: Massachusetts
+  longitude: -71.09416
+institution: Massachusetts Institute of Technology (MIT)
+long_name: The Reference Energy Disaggregation Data set
+name: REDD
+number_of_buildings: 6
+publication_date: 2011
+related_documents:
+- http://redd.csail.mit.edu
+- 'J. Zico Kolter and Matthew J. Johnson. REDD: A public data set for energy disaggregation
+  research. In proceedings of the SustKDD workshop on Data Mining Applications in
+  Sustainability, 2011. http://redd.csail.mit.edu/kolter-kddsust11.pdf
+
+  '
+schema: https://github.com/nilmtk/nilm_metadata/tree/v0.2
+subject: Disaggregated power demand from domestic buildings.
+timezone: UTC

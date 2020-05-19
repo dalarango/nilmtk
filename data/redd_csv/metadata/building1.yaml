@@ -1,0 +1,189 @@
+appliances:
+- instance: 1
+  meters:
+  - 3
+  - 4
+  original_name: oven
+  type: electric oven
+- instance: 1
+  meters:
+  - 5
+  original_name: refrigerator
+  type: fridge
+- instance: 1
+  meters:
+  - 6
+  original_name: dishwaser
+  type: dish washer
+- instance: 1
+  meters:
+  - 7
+  multiple: true
+  original_name: kitchen_outlets
+  room: kitchen
+  type: sockets
+- instance: 2
+  meters:
+  - 8
+  multiple: true
+  original_name: kitchen_outlets
+  room: kitchen
+  type: sockets
+- instance: 1
+  meters:
+  - 9
+  multiple: true
+  original_name: lighting
+  type: light
+- components:
+  - meters:
+    - 10
+    type: motor
+  - meters:
+    - 20
+    type: electric heating element
+  instance: 1
+  meters:
+  - 10
+  - 20
+  original_name: washer_dryer
+  type: washer dryer
+- instance: 1
+  meters:
+  - 11
+  original_name: microwave
+  type: microwave
+- instance: 1
+  meters:
+  - 12
+  multiple: true
+  original_name: bathroom_gfi
+  room: bathroom
+  type: unknown
+- instance: 1
+  meters:
+  - 13
+  original_name: electric_heat
+  type: electric space heater
+- instance: 1
+  meters:
+  - 14
+  original_name: stove
+  type: electric stove
+- instance: 3
+  meters:
+  - 15
+  multiple: true
+  original_name: kitchen_outlets
+  room: kitchen
+  type: sockets
+- instance: 4
+  meters:
+  - 16
+  multiple: true
+  original_name: kitchen_outlets
+  room: kitchen
+  type: sockets
+- instance: 2
+  meters:
+  - 17
+  multiple: true
+  original_name: lighting
+  type: light
+- instance: 3
+  meters:
+  - 18
+  multiple: true
+  original_name: lighting
+  type: light
+- description: 'This could be a dud channel. It almost certainly is not a washer dryer.
+
+    '
+  instance: 2
+  meters:
+  - 19
+  original_name: washer_dryer
+  type: unknown
+elec_meters:
+  1:
+    data_location: /building1/elec/meter1
+    device_model: REDD_whole_house
+    site_meter: true
+  2:
+    data_location: /building1/elec/meter2
+    device_model: REDD_whole_house
+    site_meter: true
+  3:
+    data_location: /building1/elec/meter3
+    device_model: eMonitor
+    submeter_of: 0
+  4:
+    data_location: /building1/elec/meter4
+    device_model: eMonitor
+    submeter_of: 0
+  5:
+    data_location: /building1/elec/meter5
+    device_model: eMonitor
+    submeter_of: 0
+  6:
+    data_location: /building1/elec/meter6
+    device_model: eMonitor
+    submeter_of: 0
+  7:
+    data_location: /building1/elec/meter7
+    device_model: eMonitor
+    submeter_of: 0
+  8:
+    data_location: /building1/elec/meter8
+    device_model: eMonitor
+    submeter_of: 0
+  9:
+    data_location: /building1/elec/meter9
+    device_model: eMonitor
+    submeter_of: 0
+  10:
+    data_location: /building1/elec/meter10
+    device_model: eMonitor
+    submeter_of: 0
+  11:
+    data_location: /building1/elec/meter11
+    device_model: eMonitor
+    submeter_of: 0
+  12:
+    data_location: /building1/elec/meter12
+    device_model: eMonitor
+    submeter_of: 0
+  13:
+    data_location: /building1/elec/meter13
+    device_model: eMonitor
+    submeter_of: 0
+  14:
+    data_location: /building1/elec/meter14
+    device_model: eMonitor
+    submeter_of: 0
+  15:
+    data_location: /building1/elec/meter15
+    device_model: eMonitor
+    submeter_of: 0
+  16:
+    data_location: /building1/elec/meter16
+    device_model: eMonitor
+    submeter_of: 0
+  17:
+    data_location: /building1/elec/meter17
+    device_model: eMonitor
+    submeter_of: 0
+  18:
+    data_location: /building1/elec/meter18
+    device_model: eMonitor
+    submeter_of: 0
+  19:
+    data_location: /building1/elec/meter19
+    device_model: eMonitor
+    submeter_of: 0
+  20:
+    data_location: /building1/elec/meter20
+    device_model: eMonitor
+    submeter_of: 0
+instance: 1
+original_name: house_1
