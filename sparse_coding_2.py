@@ -1,0 +1,138 @@
+from distutils.version import LooseVersion
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+from sklearn.decomposition import SparseCoder, DictionaryLearning
+
+
+def ricker_function(resolution, center, width):
+    """Discrete sub-sampled Ricker (Mexican hat) wavelet"""
+    x = np.linspace(0, resolution - 1, resolution)
+    x = ((2 / (np.sqrt(3 * width) * np.pi ** .25))
+         * (1 - (x - center) ** 2 / width ** 2)
+         * np.exp(-(x - center) ** 2 / (2 * width ** 2)))
+    return x
+
+
+def ricker_matrix(width, resolution, n_components):
+    """Dictionary of Ricker (Mexican hat) wavelets"""
+    centers = np.linspace(0, resolution - 1, n_components)
+    D = np.empty((n_components, resolution))
+    for i, center in enumerate(centers):
+        D[i] = ricker_function(resolution, center, width)
+    D /= np.sqrt(np.sum(D ** 2, axis=1))[:, np.newaxis]
+    return D
+
+## Parameters
+
+resolution = 1024
+subsampling = 3
+width = 100
+n_components = resolution // subsampling
+
+## Compute dictionary matrix
+D_fixed = ricker_matrix(width=width, resolution=resolution,
+                        n_components=n_components)
+
+D_multi = np.r_[tuple(ricker_matrix(width=w, resolution=resolution,
+                      n_components=n_components // 5)
+                for w in (10, 50, 100, 500, 1000))]
+
+### Original signal
+y = np.linspace(0, resolution - 1, resolution)
+first_quarter = y < resolution / 4
+y[first_quarter] = 3.
+y[np.logical_not(first_quarter)] = -1.
+
+# List the different sparse coding methods in the following format:
+# (title, transform_algorithm, transform_alpha,
+#  transform_n_nozero_coefs, color)
+estimators = [('OMP', 'omp', None, 15, 'navy'),
+              ('Lasso', 'lasso_lars', 2, None, 'turquoise'), ]
+lw = 2
+
+# Avoid FutureWarning about default value change when numpy >= 1.14
+lstsq_rcond = None if LooseVersion(np.__version__) >= '1.14' else -1
+
+
+
+
+D = D_fixed
+n_nonzero = 15
+alpha = None
+algo = 'omp'
+color_1 = 'red'
+title = algo.upper()
+
+coder_1 = SparseCoder(dictionary=D, transform_n_nonzero_coefs=n_nonzero,
+                            transform_alpha=alpha, transform_algorithm=algo)
+
+x_ = coder_1.transform(y.reshape(1, -1))
+density = len(np.flatnonzero(x_))
+x = np.ravel(np.dot(x_, D))
+squared_error = np.sum((y - x) ** 2)
+
+
+D = D_multi
+n_nonzero = 15
+alpha = None
+algo = 'omp'
+color_2 = 'green'
+title = algo.upper()
+
+coder_2 = SparseCoder(dictionary=D, transform_n_nonzero_coefs=n_nonzero,
+                            transform_alpha=alpha, transform_algorithm=algo)
+
+z_ = coder_2.transform(y.reshape(1, -1))
+density = len(np.flatnonzero(z_))
+z = np.ravel(np.dot(z_, D))
+squared_error = np.sum((y - z) ** 2)
+
+
+
+
+plt.plot(y, color= 'black', lw=lw, linestyle='--', label='Original signal')
+plt.plot(x, color=color_1, lw=lw,
+            label='%s: %s nonzero coefs,\n%.2f error'
+            % (title, density, squared_error))
+plt.plot(z, color=color_2, lw=lw,
+            label='%s: %s nonzero coefs,\n%.2f error'
+            % (title, density, squared_error))
+plt.axis('tight')
+plt.legend(shadow=False, loc='best')
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+######################## Locura con Dictionary learning #################################
+
+
+dic = DictionaryLearning(n_components=15)
+res_dic = dic.fit_transform(y.reshape(-1, 1))
+
+
+coder_res = SparseCoder(dictionary=res_dic.reshape(-1, 1024), transform_n_nonzero_coefs=n_nonzero,
+                            transform_alpha=alpha, transform_algorithm=algo)
+
+res = coder_res.transform(y.reshape(1, -1))
+density = len(np.flatnonzero(res))
+res = np.ravel(np.dot(res, res_dic.reshape(15, -1)))
+squared_error = np.sum((y - res) ** 2)
+
+
+plt.plot(res, color='blue', lw=lw)
+plt.axis('tight')
+plt.legend(shadow=False, loc='best')
+plt.show()
+
+#######################################################################################
