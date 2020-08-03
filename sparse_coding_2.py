@@ -4,6 +4,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from scipy.interpolate import interp1d
+from scipy.signal import savgol_filter
+
 from sklearn.decomposition import SparseCoder, DictionaryLearning
 
 
@@ -14,7 +17,6 @@ def ricker_function(resolution, center, width):
          * (1 - (x - center) ** 2 / width ** 2)
          * np.exp(-(x - center) ** 2 / (2 * width ** 2)))
     return x
-
 
 def ricker_matrix(width, resolution, n_components):
     """Dictionary of Ricker (Mexican hat) wavelets"""
@@ -41,6 +43,8 @@ def smooth(x,window_len=11,window='hanning'):
                 w=eval('np.'+window+'(window_len)')
         y=np.convolve(w/w.sum(),s,mode='same')
         return y[window_len:-window_len+1]
+
+
 
 
 ## Parameters
@@ -78,7 +82,12 @@ D_multi = np.r_[tuple(ricker_matrix(width=w, resolution=resolution,
 y = sr_df['VOLUM'].iloc[0:resolution].values
 y = y.astype('float64')
 
-y = smooth(y, window_len=50, window='hanning')
+#xx = np.linspace(1,resolution, resolution)
+#itp = interp1d(xx, y, kind='linear')
+#window_size, poly_order = 51, 3
+#y = savgol_filter(itp(xx), window_size, poly_order)
+
+y = smooth(y, window_len=resolution//25, window='hanning')
 
 # List the different sparse coding methods in the following format:
 # (title, transform_algorithm, transform_alpha,
@@ -135,36 +144,3 @@ plt.plot(z, color=color_2, lw=lw,
 plt.axis('tight')
 plt.legend(shadow=False, loc='best')
 plt.show()
-
-
-
-
-
-
-
-
-
-
-
-######################## Locura con Dictionary learning #################################
-
-
-dic = DictionaryLearning(n_components=15)
-res_dic = dic.fit_transform(y.reshape(-1, 1))
-
-
-coder_res = SparseCoder(dictionary=res_dic.reshape(-1, 1024), transform_n_nonzero_coefs=n_nonzero,
-                            transform_alpha=alpha, transform_algorithm=algo)
-
-res = coder_res.transform(y.reshape(1, -1))
-density = len(np.flatnonzero(res))
-res = np.ravel(np.dot(res, res_dic.reshape(15, -1)))
-squared_error = np.sum((y - res) ** 2)
-
-
-plt.plot(res, color='blue', lw=lw)
-plt.axis('tight')
-plt.legend(shadow=False, loc='best')
-plt.show()
-
-#######################################################################################
