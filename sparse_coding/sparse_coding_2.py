@@ -45,13 +45,11 @@ def smooth(x,window_len=11,window='hanning'):
         return y[window_len:-window_len+1]
 
 
-
-
 ## Parameters
 
-resolution = 1024
-subsampling = 3
-width = 100
+resolution = 19126
+subsampling = 800
+width = 5000
 n_components = resolution // subsampling
 
 sr_df = pd.read_csv('Dataanalyse_forbruksverdier.csv', sep=';')
@@ -63,7 +61,7 @@ D_fixed = ricker_matrix(width=width, resolution=resolution,
 
 D_multi = np.r_[tuple(ricker_matrix(width=w, resolution=resolution,
                       n_components=n_components // 5)
-                for w in (10, 50, 100, 500, 1000))]
+                for w in (10, 50, 100, 500, 1000, 5000, 12000, 19000))]
 
 ### Original signal
 
@@ -87,7 +85,7 @@ y = y.astype('float64')
 #window_size, poly_order = 51, 3
 #y = savgol_filter(itp(xx), window_size, poly_order)
 
-y = smooth(y, window_len=resolution//25, window='hanning')
+y = smooth(y, window_len=resolution//100, window='hanning')
 
 # List the different sparse coding methods in the following format:
 # (title, transform_algorithm, transform_alpha,
@@ -117,7 +115,7 @@ squared_error = np.sum((y - x) ** 2)
 
 
 D = D_multi
-n_nonzero = 15
+n_nonzero = 8
 alpha = None
 algo = 'omp'
 color_2 = 'green'
