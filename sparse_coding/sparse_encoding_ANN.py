@@ -36,7 +36,7 @@ width = 5000
 
 
 
-sr_df = pd.read_csv('../Dataanalyse_forbruksverdier.csv', sep='\t')
+sr_df = pd.read_csv('../Dataanalyse_forbruksverdier.csv', sep=';')
 sr_df = sr_df.stack().str.replace(',','.').unstack()
 
 y = sr_df['VOLUM'].iloc[0:resolution].values
@@ -47,12 +47,124 @@ y = smooth(y, window_len=resolution//100, window='hanning')
 
 
 signal_1 = y
-signal_2 = y-0.5*y + 2*y*y
-main_signal = signal_1 + signal_2
+signal_2 = y-1.8*y + 17*y*y
+signal_3 = y-1*y + 15*y*y
 
-comp_matrix = np.column_stack((main_signal, signal_1, signal_2))
+agg_signal = signal_1 + signal_2 + signal_3
+
+## Initialize
+
+n = 3
+T = len(signal_1)
+m = 1
+rp = 0.0005
+
+A = np.random.random((n,m))
+B = np.random.random((T,n))
+
+
+x = signal_1
+
+B = np.asarray(B)
+A = np.asarray(A)
+coder = SparseCoder(dictionary=B.T,
+                        transform_alpha=rp, transform_algorithm='lasso_cd')
+comps, acts = librosa.decompose.decompose(x.reshape(-1,1),transformer=coder)
+acts = self._pos_constraint(acts)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+comp_matrix = np.column_stack((signal_1, signal_2, signal_3))
 
 x_train = {'main signal': comp_matrix[:,0:1], 'app_1' : comp_matrix[:,1:2], 'app_2' : comp_matrix[:,2:3]}
+
+x_train = comp_matrix[:10000, ]
+x_test  = comp_matrix[10000:, ] 
+
+
+from Own_imp_SE import DSC
+
+## Set parameters
+train_set = x_train
+test_set = x_test
+k = x_train.shape[1]
+T = x_train.shape[0]
+m = x_train.shape[1]
+rp = 0.0005
+epsilon = 0.001
+alpha = 0.00001
+steps = 10 # steps must be higher than k
+n_components = x_train.shape[1]
+
+# Instanciate discriminator
+
+dsc = DSC(train_set, alpha, epsilon, rp, steps, n_components, m, T, k)
+
+# Pretraining
+A_list, B_list = dsc.pre_training(train_set)
+
+# Dissagregation training
+
+# Use test set
+
+# Check accuracy
+
+# Dissagregation error
+
+# Plotting
+
+
+
+def F(self,x,B,x_train=None,A=None,rp_tep=False,rp_gl=False):
+        '''
+        input is lists of the elements
+        output list of elements
+        '''
+        # 4b
+        B = np.asarray(B)
+        A = np.asarray(A)
+        coder = SparseCoder(dictionary=B.T,
+                                transform_alpha=self.rp, transform_algorithm='lasso_cd')
+        comps, acts = librosa.decompose.decompose(x,transformer=coder)
+        acts = self._pos_constraint(acts)
+
+return acts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 train_set = x_train
 train_sum = sum(x_train.values())
@@ -62,15 +174,16 @@ epsilon = 0.001
 rp = 0.0005
 steps = 10
 n_components = 3
-T,m = x_train[list(x_train.keys())[0]].shape
-
+T,_ = x_train[list(x_train.keys())[0]].shape
+m = 3
 
 dsc = DSC(train_set,train_sum,alpha,epsilon,rp,steps,n_components,m,T,k)
 
 A_list,B_list = dsc.pre_training(train_set.values())
 
+x = np.concatenate(list(train_set.values())).reshape(-1, 3)
 
-#B_cat = dsc.DD(np.concatenate(list(train_set.values())).reshape(len(comp_matrix), 3),B_list,A_list)
+B_cat = dsc.DD(x,B_list,A_list)
 
 
 A_star = np.vstack(A_list)
@@ -85,19 +198,76 @@ x_train_sum = train_set.values()
 
 B_cat_p = B_cat
 
-x = np.concatenate(list(train_set.values())).reshape(len(comp_matrix), -1)
+x = np.concatenate(list(train_set.values())).reshape(-1, 1)
 
 
 acts = dsc.F(x,B_cat,A=A_star)
 
-zeroes = np.zeros((len(A_star), 1))
-
-
-A_star = np.concatenate((A_star, zeroes, zeroes), axis=1)
-
 B_cat = (B_cat-alpha*((x-B_cat.dot(acts))
                     .dot(acts.T) - (x-B_cat.dot(A_star)).dot(A_star.T)))
 
-B_cat = (B_cat-alpha*((x-B_cat.dot(acts))
-                    .dot(acts.T) - (x-B_cat.dot(A_star)).dot(A_star.T)))
+B_cat = dsc._pos_constraint(B_cat)
+B_cat /= sum(B_cat)
+
+# convergence check
+acts_split = np.split(acts,dsc.k,axis=0)
+B_split = np.split(B_cat,dsc.k,axis=1)
+acc_iter = dsc.accuracy(x_train_sum,dsc.train_sum,B_list,acts_split)
+
+x = x_train_sum
+x_sum = dsc.train_sum
+B = B_list
+A = A_list
+
+B_cat = np.hstack(B_list)
+A_cat = np.vstack(A_list)
+
+A_prime = dsc.F(x_sum,B_cat,A=A_cat)
+A_last = np.split(A_prime,dsc.k,axis=0)
+x_predict = dsc.predict(A_last,B)
+acc_numerator = (map(lambda i: (np.minimum((B[i].dot(A_last[i])).sum() ,
+                (sum(x[i].sum())))) ,
+                range(len(B))))
+acc_denominator = sum(x_predict).sum()
+acc = sum(acc_numerator) / acc_denominator
+acc_numerator = (map(lambda i: (np.minimum((B[i].dot(A_last[i])).sum() ,
+                (sum(x[i].sum())))) ,
+                range(len(B))))
+acc_denominator = x_sum.values.sum()
+acc_star = sum(acc_numerator) / acc_denominator
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+acc_iter = dsc.accuracy(x_train_sum,dsc.train_sum,B_split,A_list)
+err_iter = dsc.error(x_train_sum,dsc.train_sum,B_list,acts_split)
+acc_ddsc.append(acc_iter)
+err_ddsc.append(err_iter)
+a_ddsc.append(np.linalg.norm(acts))
+b_ddsc.append(np.linalg.norm(B_cat))
+
+change = np.linalg.norm(B_cat - B_cat_p)
+t += 1
+print("DD change is %f and step is %d" %(change,t))
+
+
 
