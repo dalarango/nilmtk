@@ -30,10 +30,10 @@ def smooth(x,window_len=11,window='hanning'):
         y=np.convolve(w/w.sum(),s,mode='same')
         return y[window_len:-window_len+1]
 
+
 resolution = 19126
 subsampling = 1800
 width = 5000
-
 
 
 sr_df = pd.read_csv('../Dataanalyse_forbruksverdier.csv', sep=';')
@@ -54,29 +54,63 @@ agg_signal = signal_1 + signal_2 + signal_3
 
 ## Initialize
 
-n = 3
-T = len(signal_1)
-m = 1
+
+
+from Own_imp_SE import DSC
+
+x = agg_signal
+
+x_train = np.column_stack((agg_signal, signal_1))
+
+
+
+train_set = x_train[:, 0:1]
+app_data = x_train[:, 1:2]
+k = x_train.shape[1] -1
+T = x_train.shape[0] 
+m = x_train.shape[1] -1
 rp = 0.0005
+epsilon = 0.001
+alpha = 0.00001
+steps = 100 # steps must be higher than k
+n_components = x_train.shape[1] + 1
+n = n_components
 
 A = np.random.random((n,m))
 B = np.random.random((T,n))
 
 
-x = signal_1
-
-B = np.asarray(B)
-A = np.asarray(A)
-coder = SparseCoder(dictionary=B.T,
-                        transform_alpha=rp, transform_algorithm='lasso_cd')
-comps, acts = librosa.decompose.decompose(x.reshape(-1,1),transformer=coder)
-acts = self._pos_constraint(acts)
+dsc = DSC(train_set, alpha, epsilon, rp, steps, n_components, m, T, k)
 
 
+### Initial dict
+
+#D_fixed = ricker_matrix(width=width, resolution=resolution,
+#                        n_components=n_components)
+#D_fixed = DSC._pos_constraint(D_fixed)
+#coder = SparseCoder(dictionary=D_fixed.T,
+#                            transform_alpha=rp, transform_algorithm='lasso_cd')
+#x_ = coder.transform(train_set)
+#A_list, B_list = dsc.pre_training(no_appliances=1)
 
 
+B_cat, theta = dsc.DD(train_set, B, A, app_data)
 
 
+###############################################################
+#acts = dsc.F(train_set, np.hstack(B_list), A=np.vstack(A_list))
+###############################################################
+
+A_prime = dsc.F(train_set, B_cat, A=np.vstack(A))
+
+x_predict = theta * B_cat.dot(A_prime)
+
+
+plt.plot(app_data, color= 'black', lw=2, linestyle='--', label='Real data', alpha=0.5)
+plt.plot(x_predict, color='red', lw=2, linestyle='--', label='Reconstructed', alpha=0.5)
+plt.axis('tight')
+plt.legend(shadow=False, loc='best')
+plt.show()
 
 
 

@@ -4,6 +4,7 @@ import time
 import librosa
 import pickle
 from sklearn.decomposition import SparseCoder,DictionaryLearning
+from sklearn.metrics import mean_squared_error
 from sklearn import cluster
 import matplotlib.pyplot as plt
 
@@ -21,6 +22,12 @@ class DSC():
         self.m = m
         self.T = T
         self.k = k
+
+    def _initialization(self):
+        a = np.random.random((self.n,self.m))
+        b = np.random.random((self.T,self.n))
+        b /= sum(b)
+        return a,b
     
     @staticmethod
     def _pos_constraint(a):
@@ -43,53 +50,90 @@ class DSC():
 
         return acts
 
-    def DD(self,x,B,A):
-        '''
-        Taking the parameters as x_train_use and discriminate over the
-        entire region
-        '''
-        # 3.
-        A_star = np.vstack(A)
-        B_cat = np.hstack(B)
-        change = 1
+    def pre_training(self, no_appliances):
+        A_list, B_list = self.nnsc(no_appliances)
+        return A_list, B_list
+
+    def nnsc(self, no_appliances):
+        epsilon = 0.01
+        A_list = []
+        B_list = []
+        for x in range(no_appliances):
+            A, B = self._initialization()
+            Ap = A
+            Bp = B
+            Ap1 = Ap
+            Bp1 = Bp
+            t = 0
+            change = 1
+            while t <= self.steps and self.epsilon <= change:
+                Bp = Bp -self.alpha*np.dot((np.dot(Bp,Ap) - x), Ap.T)
+                Bp = self._pos_constraint(Bp)
+                Bp /= sum(Bp)
+                dot2 = np.divide(np.dot(Bp.T, x), (np.dot(np.dot(Bp.T, Bp), Ap) + self. rp))
+                Ap = np.multiply(Ap, dot2)
+                change = np.linalg.norm(Ap - Ap1)
+                change2 = np.linalg.norm(Bp -Bp1)
+                Ap1 = Ap
+                Bp1 = Bp
+                t += 1
+                print("NNSC change is %s for iter %s, and B change is %s" %(change,t,change2))
+            
+            print("Gone through one appliance")
+            A_list.append(Ap)
+            B_list.append(Bp)
+        return A_list, B_list
+
+
+    def DD(self,x,B,A, real_app_data):
+        #A_star = np.vstack(A)
+        #B_cat  = np.hstack(B)
+        A_star = A
+        B_cat = B
         t = 0
-        acc_ddsc = []
-        err_ddsc = []
-        a_ddsc = []
-        b_ddsc = []
-        x_train_sum = self.train_set.values()
-        while t <= self.steps and self.epsilon <= change:
+        err = 1
+        err_change = 1
+        while t <= self.steps and self.epsilon <= err:
+            print("Starting iteration .....")
             B_cat_p = B_cat
-            # 4a
-            acts = self.F(x,B_cat,A=A_star)
-            # 4b
+
+            acts = self.F(x, B_cat, A=A_star)
             B_cat = (B_cat-self.alpha*((x-B_cat.dot(acts))
                     .dot(acts.T) - (x-B_cat.dot(A_star)).dot(A_star.T)))
-            # 4c
-            # scale columns s.t. b_i^(j) = 1
             B_cat = self._pos_constraint(B_cat)
             B_cat /= sum(B_cat)
+            
 
-            # convergence check
-            acts_split = np.split(acts,self.k,axis=0)
-            B_split = np.split(B_cat,self.k,axis=1)
-            acc_iter = self.accuracy(x_train_sum,self.train_sum,B,acts_split)
-            acc_iter = self.accuracy(x_train_sum,self.train_sum,B_split,A)
-            err_iter = self.error(x_train_sum,self.train_sum,B,acts_split)
-            acc_ddsc.append(acc_iter)
-            err_ddsc.append(err_iter)
-            a_ddsc.append(np.linalg.norm(acts))
-            b_ddsc.append(np.linalg.norm(B_cat))
+            A_prime = self.F(x, B_cat, A=np.vstack(A))
+
+            pred = B_cat.dot(A_prime)
+            err_change = err - mean_squared_error(real_app_data, pred)
+            err = mean_squared_error(real_app_data, pred)
 
             change = np.linalg.norm(B_cat - B_cat_p)
+
             t += 1
-            print("DD change is %f and step is %d" %(change,t))
+            print("DD error change is %f and step is %d" %(err_change, t))
+            print("DD current error is %f" %(err))
+        t = 0
+        err = 1
+        theta = 0.1
+        gamma = 0.01
+        ipsilon = 0.0001
+        m = len(real_app_data)
+        while t <= self.steps and ipsilon <= change:
+            print("Iterating for theta")
+            err_p = err 
+            A_prime = self.F(x, B_cat, A=np.vstack(A))
+            pred = theta * B_cat.dot(A_prime)
+            err = mean_squared_error(real_app_data, pred)
+            theta = theta - (1/m) *gamma*(err)
+            change = abs(err - err_p)
+            print("theta is %f" %(theta))
+            print("Error change is %f" %(change))
+            print(" -------- --------- --------")
+        return B_cat, theta
 
-        self.acc_ddsc = acc_ddsc
-        self.err_ddsc = err_ddsc
-        self.a_ddsc = a_ddsc
-        self.b_ddsc = b_ddsc
-        return B_cat
 
 
-    
+
