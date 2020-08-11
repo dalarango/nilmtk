@@ -11,6 +11,12 @@ import matplotlib.pyplot as plt
 
 class DSC():
 
+    """
+    This is an implementation of the Discriminative Sparse Coding Algorithm proposed by Kolter et al (2010) 
+    (http://papers.nips.cc/paper/4054-energy-disaggregation-via-discriminative-sparse-coding.pdf) 
+
+    """
+
     def __init__(self, train_set, gradient_step_size, epsilon, regularization_parameter, steps, n_components, m, T, k):
         
         self.train_set = train_set
@@ -24,6 +30,13 @@ class DSC():
         self.k = k
 
     def _initialization(self):
+        """
+        Initializes the two main arrays needed for decomposition, namely A and B
+
+        Parameters
+        -----------
+
+        """
         a = np.random.random((self.n,self.m))
         b = np.random.random((self.T,self.n))
         b /= sum(b)
@@ -31,14 +44,26 @@ class DSC():
     
     @staticmethod
     def _pos_constraint(a):
+        """
+        Ensures non negative values in the signal matrix (A)
+
+        Parameters
+        -----------
+
+
+        """
         indices = np.where(a < 0.0)
         a[indices] = 0.0
         return a
 
     def F(self,x,B,x_train=None,A=None,rp_tep=False,rp_gl=False):
         '''
-        input is lists of the elements
-        output list of elements
+        Calculates a signal matrix based on a known disctionary
+
+        Parameters
+        -----------
+
+
         '''
         # 4b
         B = np.asarray(B)

@@ -16,6 +16,18 @@ from sparse_coding_2 import ricker_matrix
 
 
 def smooth(x,window_len=11,window='hanning'):
+        """
+        Creates a smoothened version of a given timeseries, as such it provides
+        an easier-to-deconstruct time series to apply DSC to.
+
+        Parameters
+        -----------
+
+        x: numpy array / pandas series: time series to be smoothened
+        window_len: int: how many datapoints should be used as a smoothening base
+        window: string: smoothening technnique
+
+        """
         if x.ndim != 1:
                 raise ValueError("smooth only accepts 1 dimension arrays.")
         if x.size < window_len:
@@ -35,7 +47,10 @@ def smooth(x,window_len=11,window='hanning'):
 
 
 if __name__ == "__main__":
-    
+        
+        #NOTE: This implementation makes use of a combination of a precomputed signal matrix (A)
+        # and a Ricker matrix generated dictionary (B) for initialization purposes.
+
         resolution = 19126
         subsampling = 1800
         width = 5000
@@ -69,7 +84,7 @@ if __name__ == "__main__":
         ## Initialize
         x = agg_signal
 
-        x_train = np.column_stack((agg_signal, signal_3))
+        x_train = np.column_stack((agg_signal, signal_1))
 
         np.any(np.isnan(x_train))
         np.all(np.isfinite(x_train))
@@ -115,7 +130,7 @@ if __name__ == "__main__":
         x_predict = theta * B_cat.dot(A_prime)
 
 
-        plt.plot(app_data, color= 'black', lw=2, linestyle='--', label='Real data', alpha=0.6)
+        plt.plot(app_data, color= 'black', lw=2, linestyle='-', label='Real data', alpha=0.6)
         plt.plot(x_predict, color='red', lw=2, linestyle='-', label='Reconstructed', alpha=0.5)
         plt.axis('tight')
         plt.legend(shadow=False, loc='best')
