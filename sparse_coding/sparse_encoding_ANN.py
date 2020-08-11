@@ -12,6 +12,7 @@ from sklearn.metrics import mean_squared_error
 import librosa
 import time
 from Own_imp_SE import DSC
+from sparse_coding_2 import ricker_matrix
 
 
 def smooth(x,window_len=11,window='hanning'):
@@ -91,28 +92,23 @@ if __name__ == "__main__":
         #B = np.random.random(size=(T,n))
 
         A = np.load("A.npy")
-        B = np.load("B.npy")
+        #B = np.load("B.npy")
 
         dsc = DSC(train_set, alpha, epsilon, rp, steps, n_components, m, T, k)
 
 
         ### Initial dict
 
-        #D_fixed = ricker_matrix(width=width, resolution=resolution,
-        #                        n_components=n_components)
-        #D_fixed = DSC._pos_constraint(D_fixed)
-        #coder = SparseCoder(dictionary=D_fixed.T,
-        #                            transform_alpha=rp, transform_algorithm='lasso_cd')
-        #x_ = coder.transform(train_set)
-        #A_list, B_list = dsc.pre_training(no_appliances=1)
+        #A = ricker_matrix(width=1, resolution=3,
+        #                     n_components=1).T
+
+        #A = dsc._pos_constraint(A)
+
+        B = ricker_matrix(width=5000, resolution=resolution,
+                             n_components=n_components).T
 
 
         B_cat, theta = dsc.DD(train_set, B, A, app_data)
-
-
-        ###############################################################
-        #acts = dsc.F(train_set, np.hstack(B_list), A=np.vstack(A_list))
-        ###############################################################
 
         A_prime = dsc.F(train_set, B_cat, A=np.vstack(A))
 
@@ -120,7 +116,7 @@ if __name__ == "__main__":
 
 
         plt.plot(app_data, color= 'black', lw=2, linestyle='--', label='Real data', alpha=0.6)
-        plt.plot(x_predict, color='red', lw=2, linestyle='--', label='Reconstructed', alpha=0.5)
+        plt.plot(x_predict, color='red', lw=2, linestyle='-', label='Reconstructed', alpha=0.5)
         plt.axis('tight')
         plt.legend(shadow=False, loc='best')
         plt.show()

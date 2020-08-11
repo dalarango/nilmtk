@@ -44,7 +44,7 @@ def smooth(x,window_len=11,window='hanning'):
         y=np.convolve(w/w.sum(),s,mode='same')
         return y[window_len:-window_len+1]
 
-
+"""
 ## Parameters
 
 resolution = 19126
@@ -142,3 +142,5 @@ plt.plot(z, color=color_2, lw=lw,
 plt.axis('tight')
 plt.legend(shadow=False, loc='best')
 plt.show()
+
+"""
