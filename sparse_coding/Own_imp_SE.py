@@ -117,9 +117,9 @@ class DSC():
             print("DD current error is %f" %(err))
         t = 0
         err = 1
-        theta = 0.1
-        gamma = 0.01
-        ipsilon = 0.0001
+        theta = 2.0
+        gamma = 0.1
+        ipsilon = 0.00001
         m = len(real_app_data)
         while t <= self.steps and ipsilon <= change:
             print("Iterating for theta")
@@ -127,8 +127,8 @@ class DSC():
             A_prime = self.F(x, B_cat, A=np.vstack(A))
             pred = theta * B_cat.dot(A_prime)
             err = mean_squared_error(real_app_data, pred)
-            theta = theta - (1/m) *gamma*(err)
             change = abs(err - err_p)
+            theta = theta - (1/m) *gamma*(err)
             print("theta is %f" %(theta))
             print("Error change is %f" %(change))
             print(" -------- --------- --------")
