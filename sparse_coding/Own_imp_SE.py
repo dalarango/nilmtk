@@ -33,8 +33,10 @@ class DSC():
         """
         Initializes the two main arrays needed for decomposition, namely A and B
 
-        Parameters
-        -----------
+        Return
+        ------
+        a: numpy array: initialized signal matrix
+        b: numpy array: initialized dictionary
 
         """
         a = np.random.random((self.n,self.m))
@@ -49,20 +51,31 @@ class DSC():
 
         Parameters
         -----------
+        a: numpy array
 
+        Return
+        ------
+        a: numpy array: input array without non-negative values 
 
         """
         indices = np.where(a < 0.0)
         a[indices] = 0.0
         return a
 
-    def F(self,x,B,x_train=None,A=None,rp_tep=False,rp_gl=False):
+    def F(self,x,B,A=None):
         '''
-        Calculates a signal matrix based on a known disctionary
+        Calculates a gradient-derived matrix (A-prime) based on a known dictionary and a known 
+        signal matrix
 
         Parameters
         -----------
+        x : numpy array: base data used for reconstruction
+        B : numpy array: Dictionary
+        A : numpy array: Singal matrix
 
+        Return
+        ------
+        acts: numpy array: derived matrix (A-prime)
 
         '''
         # 4b
@@ -76,10 +89,45 @@ class DSC():
         return acts
 
     def pre_training(self, no_appliances):
+        '''
+        This method makes use of Hoyer non-negative sparse coding (alternative algorithm to DSC)
+        NOTE: this method is not used as of 08/2020. It is nevetheless included here for 
+        future considerations
+
+        Parameters
+        -----------
+        no_appliances: int: number of appliances to disaggregate with respect to
+
+        return:
+        -----------
+
+        A_list: list: base list to construct the signal matrix A
+        B_list: list:  base list to construct the dictionary matrix B
+
+
+        '''
+
         A_list, B_list = self.nnsc(no_appliances)
         return A_list, B_list
 
     def nnsc(self, no_appliances):
+        '''
+        Method as in NNSC from nonnegative sparse coding from P.Hoyer
+        NOTE: this method is not used as of 08/2020. It is nevetheless included here for 
+        future considerations
+        
+        Parameters
+        -----------
+        no_appliances: int: number of appliances to disaggregate with respect to
+
+        return:
+        -----------
+
+        A_list: list: base list to construct the signal matrix A
+        B_list: list  base list to construct the dictionary matrix B
+
+        '''
+
         epsilon = 0.01
         A_list = []
         B_list = []
@@ -111,6 +159,23 @@ class DSC():
 
 
     def DD(self,x,B,A, real_app_data):
+        '''
+        Trains a DSC model and computes an optimal dictionary and an optimal singal matrix
+
+        Parameters
+        -----------
+        x : numpy array: base data used for reconstruction
+        B : numpy array: Dictionary
+        A : numpy array: Singal matrix'
+        real_app_data: numpy array: appliance data to train against
+
+        Return
+        ------
+        B_cat : numpy array: Optimized dictionary
+        theta : float: Scaling parameter
+
+        '''
+
         #A_star = np.vstack(A)
         #B_cat  = np.hstack(B)
         A_star = A

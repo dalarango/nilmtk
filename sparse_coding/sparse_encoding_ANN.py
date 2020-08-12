@@ -55,7 +55,6 @@ if __name__ == "__main__":
         subsampling = 1800
         width = 5000
 
-
         sr_df = pd.read_csv('../Dataanalyse_forbruksverdier.csv', sep=';')
         sr_df = sr_df.stack().str.replace(',','.').unstack()
 
